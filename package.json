@@ -1,0 +1,27 @@
+{
+  "name": "cs2-analytics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx app/server.ts"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.1.0",
+    "demofile": "^2.10.0",
+    "express": "^5.2.1",
+    "multer": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.4.0",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
