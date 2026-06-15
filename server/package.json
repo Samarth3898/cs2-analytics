@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx app/server.ts"
+    "dev": "tsx server.ts"
   },
   "type": "module",
   "keywords": [],
@@ -14,11 +14,13 @@
   "dependencies": {
     "@types/express": "^5.0.6",
     "@types/multer": "^2.1.0",
+    "cors": "^2.8.6",
     "demofile": "^2.10.0",
     "express": "^5.2.1",
     "multer": "^2.1.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/node": "^25.4.0",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.21.0",

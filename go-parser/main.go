@@ -81,6 +81,7 @@ func teamToString(team common.Team) string {
 }
 
 func main() {
+	fmt.Println("Args:", os.Args)
 
 	if len(os.Args) < 2 {
 		fmt.Println("No demo file provided")
@@ -217,5 +218,19 @@ func main() {
 		Events: eventsList,
 	}
 
-	json.NewEncoder(os.Stdout).Encode(response)
+	outputFile := os.Args[2]
+
+	file, err := os.Create(outputFile)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+
+	err = encoder.Encode(response)
+	if err != nil {
+		panic(err)
+	}
 }

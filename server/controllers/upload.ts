@@ -10,7 +10,6 @@ export const uploadFile = async (
   next: NextFunction,
 ) => {
   console.log("req.file:", req.file);
-  console.log("req.body:", req.body);
 
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -19,10 +18,32 @@ export const uploadFile = async (
   const demoPath = path.resolve(req.file.path);
   console.log("Uploaded file path:", demoPath);
 
+  const parserDir = path.resolve("../go-parser");
+
+  const outputDir = path.resolve("./parsed-events");
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir);
+  }
+
+  const matchId = Date.now().toString();
+  const fileName = `events-${matchId}.json`;
+  const outputFile = path.join(outputDir, fileName);
+
+  console.log("parserDir:", parserDir);
+  console.log("parserDir exists:", fs.existsSync(parserDir));
+  console.log(
+    "main.go exists:",
+    fs.existsSync(path.join(parserDir, "main.go")),
+  );
+
   execFile(
-    "go",
-    ["run", "main.go", demoPath],
-    { cwd: "./go-parser" },
+    "C:\\Program Files\\Go\\bin\\go.exe",
+    ["run", "main.go", demoPath, outputFile],
+    {
+      cwd: parserDir,
+      maxBuffer: 1024 * 1024 * 500, // 500 MB
+    },
     (error, stdout, stderr) => {
       // 🧹 cleanup uploaded demo file
       fs.unlink(demoPath, (err) => {
@@ -30,50 +51,45 @@ export const uploadFile = async (
       });
 
       if (error) {
-        console.error("Go error:", stderr);
-        return res.status(500).json({ error: "Parsing failed" });
+        console.error(error?.message);
+        console.error(error?.code);
+
+        return res.status(500).json({
+          error: "Parsing failed",
+          details: error.message,
+        });
       }
 
       let parsed;
 
       try {
-        parsed = JSON.parse(stdout);
+        parsed = JSON.parse(fs.readFileSync(outputFile, "utf8"));
       } catch (err) {
-        console.error("Invalid JSON from Go:", stdout);
-        return res.status(500).json({ error: "Invalid parser output" });
+        console.error("Failed to read parser output:", err);
+
+        return res.status(500).json({
+          error: "Failed to read parser output",
+        });
       }
 
       const { stats, events } = parsed;
 
-      console.log("Stats:", stats);
-      console.log("Events:", events);
+      // console.log("Stats:", stats);
+      // console.log("Events:", events);
 
-      const fights: any = computeFights(events)
-      // 📁 Create output directory if not exists
-      const outputDir = path.resolve("./parsed-events");
-      if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir);
-      }
+      const { summary, topPlayers }: any = computeFights(events);
+      console.log(topPlayers);
 
-      // 📝 Create unique filename
-      const fileName = `events-${Date.now()}.json`;
-      const filePath = path.join(outputDir, fileName);
-
-      // 💾 Write events JSON to file
-      fs.writeFile(filePath, JSON.stringify(events, null, 2), (err) => {
-        if (err) {
-          console.error("Error writing events file:", err);
-        } else {
-          console.log("Events saved to:", filePath);
-        }
-      });
-
+      console.log("About to send response");
       // ✅ Respond (you can also send file path if needed)
       res.json({
         message: "File processed successfully",
-        stats,
-        eventsFile: fileName,
+        matchId,
+        summary,
+        topPlayers,
       });
+
+      console.log("Response sent");
     },
   );
 };

@@ -1,14 +1,11 @@
 import express from "express";
-import multer from "multer"
-import fs from "fs"
-import path from "path"
-import uploadRouter from "./routes/upload-router.js"
+import uploadRouter from "./routes/upload-router.js";
+import cors from "cors";
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
 
-app.use("/cs2-analytics/upload", uploadRouter)
+app.use(cors());
 
-app.listen(3000, () => console.log("Server running on 3000"));
+app.use("/cs2-analytics/upload", uploadRouter);
 
-export default app
+export default app;

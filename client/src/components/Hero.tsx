@@ -1,4 +1,10 @@
-export default function Hero() {
+import { ReactNode } from "react";
+
+type HeroProps = {
+  children: ReactNode;
+};
+
+export default function Hero({ children }: HeroProps) {
   return (
     <section className="min-h-screen flex items-center justify-center">
       <div className="text-center">
@@ -7,9 +13,7 @@ export default function Hero() {
         <p className="mt-4 text-lg text-gray-600">
           Analyze Counter-Strike 2 demos and player performance.
         </p>
-        <button className="mt-8 px-6 py-3 bg-black text-white rounded-lg">
-          Get Started
-        </button>
+        {children}
       </div>
     </section>
   );

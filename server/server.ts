@@ -3,12 +3,8 @@ import app from "./app.js";
 
 dotenv.config({ path: ".env.dev" });
 
-const startServer = async () => {
-  // await connectCommonDB();
+const PORT = process.env.PORT || 5000;
 
-  app.listen(process.env.PORT, () => {
-    console.log(`App listening on port ${process.env.PORT}`);
-  });
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
